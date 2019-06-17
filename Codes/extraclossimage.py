@@ -89,7 +89,7 @@ with tf.Session(config=config) as sess:
                 print('video = {} / {}, i = {} / {}, psnr = {:.6f}'.format(
                     video_name, num_videos, i, length, psnr))
                     
-                path_tmp_image = 'temp_image/' + str(video_name) + '/' + str(i) + '.jpg'
+                path_tmp_image = 'temp_image/train/' + str(video_name) + '/' + str(i) + '.jpg'
                 os.makedirs(os.path.dirname(path_tmp_image), exist_ok=True)
                 image_loss_out = np.uint8(image_loss_out)
                 image_loss_out = image_loss_out.reshape(256, 256, 3)
