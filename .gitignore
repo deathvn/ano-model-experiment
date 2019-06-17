@@ -123,3 +123,4 @@ Codes/checkpoints/
 Codes/__pycache__
 Codes/summary/
 Codes/psnrs/
+Codes/*.sav
