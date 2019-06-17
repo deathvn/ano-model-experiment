@@ -9,14 +9,14 @@ import pickle
 import imutils
 
 from keras.preprocessing import image
-from keras.applications.vgg16 import VGG16
+from keras.applications.vgg19 import VGG19
 from keras.models import Model
-from keras.applications.vgg16 import preprocess_input
+from keras.applications.vgg19 import preprocess_input
 from PIL import ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES=True
 print("[+] Setup model")
-model = VGG16(weights='imagenet', include_top=False)
+model = VGG19(weights='imagenet', include_top=False)
 
 def extract_vgg16_features(path):
     img = image.load_img(path, target_size=(224, 224))
@@ -68,8 +68,8 @@ def load(container, path):
             container.append(feature)
     return path_list
 
-model_name = 'vgg16_feat.sav'
-
+model_name = 'vgg19_feat.sav'
+'''
 ###Training pharse
 train = []
 load(train, 'temp_image/train/frames')
@@ -78,9 +78,9 @@ clf.fit(train)
 pickle.dump(clf, open(model_name, 'wb'))
 y_pred_train = clf.predict(train)
 print ("error train:", y_pred_train[y_pred_train == -1].size)
-
-
 '''
+
+
 ###Testing pharse
 test = []
 test_list = load(test, 'temp_image/test/frames')
@@ -125,4 +125,3 @@ print ('acc', acc)
 print ('f1', f1)
 print ('precision', precision)
 print ('recall', recall)
-'''
