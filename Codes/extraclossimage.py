@@ -4,6 +4,7 @@ import time
 import numpy as np
 import pickle
 import cv2
+from sklearn.svm import OneClassSVM
 
 
 from models import generator
@@ -74,7 +75,8 @@ with tf.Session(config=config) as sess:
         num_videos = len(videos_info.keys())
         total = 0
         timestamp = time.time()
-
+        
+        train = []
         for video_name, video in videos_info.items():
             length = video['length']
             total += length
@@ -85,21 +87,34 @@ with tf.Session(config=config) as sess:
                 image_loss_out, psnr = sess.run((image_error, test_psnr_error),
                                 feed_dict={test_video_clips_tensor: video_clip[np.newaxis, ...]})
                 psnrs[i] = psnr
-
+                train.append(psnr)
                 print('video = {} / {}, i = {} / {}, psnr = {:.6f}'.format(
                     video_name, num_videos, i, length, psnr))
-                    
+                '''    
                 path_tmp_image = 'temp_image/train/' + str(video_name) + '/' + str(i) + '.jpg'
                 os.makedirs(os.path.dirname(path_tmp_image), exist_ok=True)
                 image_loss_out = np.uint8(image_loss_out)
                 image_loss_out = image_loss_out.reshape(256, 256, 3)
                 cv2.imwrite(path_tmp_image, image_loss_out)
-
+                '''
             psnrs[0:num_his] = psnrs[num_his]
             psnr_records.append(psnrs)
 
         result_dict = {'dataset': dataset_name, 'psnr': psnr_records, 'flow': [], 'names': [], 'diff_mask': []}
-
+        
+        ###get score
+        scores = np.array([], dtype=np.float32)
+        for i in range(num_videos):
+            distance = psnr_records[i]
+            distance = (distance - distance.min()) / (distance.max() - distance.min())
+            scores = np.concatenate((scores, distance[4:]), axis=0)
+        
+        psnr_arr = np.array(psnr_records)
+        print ("Score shape", scores.shape)
+        print ("psnr shape", psnr_arr.shape)
+        np.save("psnr_test_feat.npy", psnr_arr)
+        np.save("scores_test_feat.npy", scores)
+        
         used_time = time.time() - timestamp
         print('total time = {}, fps = {}'.format(used_time, total / used_time))
 

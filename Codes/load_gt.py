@@ -562,9 +562,11 @@ def evaluate(eval_type, save_file):
 
 def load_labels(loss_file='psnrs\ped2_l_2_alpha_1_lp_1.0_adv_0.05_gdl_1.0_flow_2.0\ped2'):
     k = get_scores_labels(loss_file)[-1]
+    scores = get_scores_labels(loss_file)[1]
+    psnr = load_psnr(loss_file)
     #k[k==1] = -1
     #k[k==0] = 1
-    return k
+    return scores, psnr, k
 
 if __name__ == '__main__':
     args = parser_args()
@@ -572,5 +574,5 @@ if __name__ == '__main__':
     eval_type = args.type
     file_path = args.file
 
-    labels = load_labels(file_path)
+    _, _, labels = load_labels(file_path)
     print (labels)
