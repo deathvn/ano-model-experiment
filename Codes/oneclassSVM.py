@@ -60,8 +60,12 @@ def load(container, path):
     for fol in folders:
         imgs = os.listdir(path + '/' + fol)
         imgs.sort(key = lambda imgs:int(imgs.split('.')[0]))
+        
         for img in imgs:
             img_path = path + '/' + fol + '/' + img
+            image_name = str(img.split('.')[0]).zfill(3)
+            os.rename(img_path, path + '/' + fol + '/' + image_name + '.jpg')
+            img_path = path + '/' + fol + '/' + image_name + '.jpg'
             print ("Extracting", img_path)
             path_list.append(img_path)
             image_dat = cv2.imread(img_path)
@@ -70,6 +74,22 @@ def load(container, path):
             #feature = extract_vgg16_features(img_path)
             container.append(feature)
     return path_list
+    
+def write_videos(path_list, predict):
+    print (path_list)
+    for path, pre in zip(path_list, predict):
+        origin_path = path.replace('temp_image/test', '../Data/ped2/testing')
+        
+        #print (origin_path)
+        img = cv2.imread(origin_path)
+        #cv2.imshow("test", img)
+        #cv2.waitKey(0)
+        h, w = img.shape[:2]
+        new_path = path.replace('frames', 'result')
+        os.makedirs(os.path.dirname(new_path), exist_ok=True)
+        if pre==-1:
+            cv2.rectangle(img, (0,0), (w, h), (0, 0, 255), 3)
+        cv2.imwrite(new_path, img)
 
 def get_scores(path):
     scores = np.load(path)
@@ -86,29 +106,32 @@ def get_psnr(path):
     return psnr
 
 model_name = 'psnr_feat.sav'
-
+'''
 ###Training pharse
-#train = []
-#load(train, 'temp_image/train/frames')
+train = []
+load(train, 'temp_image/train/frames')
 #train = get_scores('scores_train_feat.npy')
-train = get_psnr('psnr_train_feat.npy')
+#train = get_psnr('psnr_train_feat.npy')
 clf = OneClassSVM(nu=0.1, kernel="rbf", gamma=0.1)
 clf.fit(train)
 pickle.dump(clf, open(model_name, 'wb'))
 y_pred_train = clf.predict(train)
 print ("error train:", y_pred_train[y_pred_train == -1].size)
-
+'''
 
 
 ###Testing pharse
 _, _, labels = load_labels()
-#test = []
-#test_list = load(test, 'temp_image/test/frames')
+test = []
+test_list = load(test, 'temp_image/test/frames')
 #test = get_scores('scores_test_feat.npy')
 test = get_psnr('psnr_test_feat.npy')
 #print ("test", test)
 clf = pickle.load(open(model_name, 'rb'))
 y_pred_test = clf.predict(test)
+write_videos(test_list, y_pred_test)
+
+
 d = clf.decision_function(test)
 d_MAX = max(d)
 d = [ d_MAX-i for i in d]
@@ -141,10 +164,3 @@ print ("AUC", auc)
 
 
 acc = accuracy_score(labels, y_pred_test)
-f1 = f1_score(labels, y_pred_test)
-precision = precision_score(labels, y_pred_test)
-recall = recall_score(labels, y_pred_test)
-print ('acc', acc)
-print ('f1', f1)
-print ('precision', precision)
-print ('recall', recall)

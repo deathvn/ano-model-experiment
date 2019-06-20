@@ -120,6 +120,7 @@ Codes/__pycache__/pix2pix.cpython-36.pyc
 .idea/codeStyles/codeStyleConfig.xml
 Data/
 Codes/checkpoints/
+Codes/temp_image
 Codes/__pycache__
 Codes/summary/
 Codes/psnrs/
