@@ -1,0 +1,29 @@
+model 256x256 batchsize=1, 4 layers
+    G
+        Total size of variables: 7703041
+        Total bytes of variables: 30812164
+        features_size: 46661632
+        features byte: 186646528
+    D
+        Total size of variables: 6849921
+        Total bytes of variables: 27399684
+        features_size: 4952960
+        features byte: 19811840
+
+    dataset (ped2)
+        dat byte: 256*256*3*2550*4 = 2005401600
+        epoch byte: 256*256*4*3*4 = 3145728
+    
+Unet 128x128 batchsize=1, 4 layers
+    G
+        Total size of variables: 7703041
+        Total bytes of variables: 30812164
+        features_size: 11665408
+        features byte: 46661632
+    D
+        Total size of variables: 6849921
+        Total bytes of variables: 27399684
+        features_size: 1299328
+        features byte: 5197312
+
+
