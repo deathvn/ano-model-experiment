@@ -33,11 +33,11 @@ def image_to_feature_vector(image, size=(32, 32)):
 	# a list of raw pixel intensities
 	return cv2.resize(image, size).flatten()
     
-def extract_color_histogram(image, bins=(8, 8, 8)):
+def extract_histogram(image):
 	# extract a 3D color histogram from the HSV color space using
 	# the supplied number of `bins` per channel
-	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-	hist = cv2.calcHist([hsv], [0, 1, 2], None, bins, [0, 180, 0, 256, 0, 256])
+	img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	hist = cv2.calcHist([img],[0],None,[256],[0,256])
  
 	# handle normalizing the histogram if we are using OpenCV 2.4.X
 	if imutils.is_cv2():
